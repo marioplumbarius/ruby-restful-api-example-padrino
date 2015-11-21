@@ -1,5 +1,6 @@
 --color
 --format documentation
+--require support/tests_coverage
 --require spec_helper
 --require support/padrino
 --require support/factory_girl

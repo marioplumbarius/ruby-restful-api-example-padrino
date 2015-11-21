@@ -17,9 +17,12 @@ GEM
     arel (6.0.3)
     builder (3.2.2)
     byebug (8.2.0)
+    codeclimate-test-reporter (0.4.8)
+      simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.0)
     database_cleaner (1.5.1)
     diff-lcs (1.2.5)
+    docile (1.1.5)
     email_validator (1.6.0)
       activemodel
     enumerable-lazy (0.0.1)
@@ -101,6 +104,11 @@ GEM
     rspec-support (3.4.1)
     shoulda-matchers (3.0.1)
       activesupport (>= 4.0.0)
+    simplecov (0.10.0)
+      docile (~> 1.1.0)
+      json (~> 1.8)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.0)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -121,6 +129,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord (>= 3.1)
+  codeclimate-test-reporter
   database_cleaner
   email_validator
   factory_girl
