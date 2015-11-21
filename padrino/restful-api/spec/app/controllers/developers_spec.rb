@@ -1,4 +1,4 @@
-require_relative '../support/shared_examples/successful_response'
+require_relative '../../support/shared_examples/successful_response'
 
 describe '/developers' do
   let(:url) { '/developers' }
