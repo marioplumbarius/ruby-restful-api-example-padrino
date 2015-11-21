@@ -8,7 +8,6 @@ module RestfulApi
       # TODO: test me!
       def body_valid?(request_body, valid_keys)
         request_body.keys.each do |key|
-          binding.pry
           return false unless valid_keys.include? key
         end
 
