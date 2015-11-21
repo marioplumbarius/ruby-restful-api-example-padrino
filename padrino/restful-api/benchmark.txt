@@ -1,0 +1,26 @@
+startup
+  used memory
+    55M
+
+ab -n 10000 -c 1 http://127.0.0.1:3000/developers
+  used memory
+    55M
+  ruby threads
+
+ab -n 10000 -c 10 http://127.0.0.1:3000/developers
+  used memory
+    57M
+  ruby threads
+    12
+
+ab -n 10000 -c 100 http://127.0.0.1:3000/developers
+  used memory
+    80M
+  ruby threads
+    104
+
+ab -n 10000 -c 200 http://127.0.0.1:3000/developers
+  used memory
+    80M
+  ruby threads
+    104
