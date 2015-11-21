@@ -81,7 +81,7 @@ module RestfulApi
 
     private
     def sinatra_error_key_name
-      @sinatra_error_key_name ||= sinatra_error = 'sinatra.error'
+      @sinatra_error_key_name ||= 'sinatra.error'
     end
 
     # padrino's adds raised errors inside @env['sinatra.error'] by default and returns a ugly response
