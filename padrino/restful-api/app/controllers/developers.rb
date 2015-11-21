@@ -16,7 +16,6 @@ RestfulApi::App.controllers :developers do
   end
 
   post "/", :provides => :json do
-    halt 400 if @request_body.blank?
 
     @developer = Developer.new(@request_body)
 
@@ -39,7 +38,6 @@ RestfulApi::App.controllers :developers do
   end
 
   patch "/:id", :provides => :json do
-    halt 400 if @request_body.blank?
 
     begin
       @developer = Developer.update(params[:id], @request_body.as_json)
