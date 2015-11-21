@@ -1,0 +1,12 @@
+pt-BR:
+  models:
+    developer:
+      name: Desenvolvedor
+      attributes:
+        id: Id
+        name: Nome
+        age: Idade
+        github: Github
+        created_at: Criado em
+        updated_at: Atualizado em
+        email: Email

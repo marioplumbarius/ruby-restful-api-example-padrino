@@ -1,0 +1,9 @@
+---
+:orm: activerecord
+:test: rspec
+:mock: none
+:script: none
+:renderer: none
+:stylesheet: none
+:namespace: RestfulApi
+:migration_format: number
