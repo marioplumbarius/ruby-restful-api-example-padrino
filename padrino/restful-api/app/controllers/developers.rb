@@ -1,10 +1,7 @@
 RestfulApi::App.controllers :developers do
 
-  # parses the request's body, when it exists
-  before do
-    body = request.body.read
-    @request_body = JSON.parse body unless body.blank?
-  end
+  # TODO
+  # add :accepts => :json to all methods
 
   get "/", :provides => :json do
     @developers = Developer.all

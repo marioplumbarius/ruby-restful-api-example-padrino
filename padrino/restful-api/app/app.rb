@@ -65,5 +65,32 @@ module RestfulApi
     #     render 'errors/500'
     #   end
     #
+
+    # TODO: test me!
+    before do
+      # parses the body, if needed
+      body = request.body.read
+      @request_requires_body = request_requires_body?(request)
+      @request_body = JSON.parse body if @request_requires_body && !body.blank?
+
+      # halts if body is required and absent
+      halt 400, {'Content-Type' => 'application/json'}, nil if @request_requires_body && @request_body.blank?
+    end
+
+    after do
+      # halts if some of the keys from request's body is not valid
+      halt 400, {'Content-Type' => 'application/json'}, nil if sinatra_error_is_a? ActiveRecord::UnknownAttributeError
+    end
+
+    private
+    def sinatra_error_key_name
+      @sinatra_error_key_name ||= sinatra_error = 'sinatra.error'
+    end
+
+    # padrino's adds raised errors inside @env['sinatra.error'] by default and returns a ugly response
+    # this method can be used to catch them and prevent the default behaviour
+    def sinatra_error_is_a?(klass)
+      !@env[sinatra_error_key_name].blank? && @env[sinatra_error_key_name].is_a?(klass)
+    end
   end
 end
