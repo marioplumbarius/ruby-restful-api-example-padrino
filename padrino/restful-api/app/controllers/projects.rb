@@ -47,7 +47,7 @@ RestfulApi::App.controllers :projects do
         render_errors @project
       end
 
-    rescue ActiveRecord::RecordNotFound => e
+    rescue ActiveRecord::RecordNotFound
       status 404
     end
   end
