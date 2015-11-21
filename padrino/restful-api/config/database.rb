@@ -16,7 +16,6 @@
 ActiveRecord::Base.configurations[:development] = {
   :adapter => 'sqlite3',
   :database => Padrino.root('db', 'restful_api_development.db')
-
 }
 
 ActiveRecord::Base.configurations[:production] = {
