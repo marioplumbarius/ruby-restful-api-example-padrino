@@ -1,5 +1,6 @@
 # Padrino's RESTFul API example
 
+[![Code Climate](https://codeclimate.com/github/marioluan/ruby-web-frameworks-examples/badges/gpa.svg)](https://codeclimate.com/github/marioluan/ruby-web-frameworks-examples)
 ***
 
 ## Getting Started:
