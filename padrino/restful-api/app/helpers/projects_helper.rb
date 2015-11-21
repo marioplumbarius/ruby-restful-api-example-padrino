@@ -2,10 +2,10 @@
 
 module RestfulApi
   class App
-    module ProjectHelper
+    module ProjectsHelper
       #
     end
 
-    helpers ProjectHelper
+    helpers ProjectsHelper
   end
 end
