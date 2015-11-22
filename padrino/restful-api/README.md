@@ -27,6 +27,11 @@ $ rspec
 # Test coverage report will be available at ./coverage/index.html
 ```
 
+### check code style
+```shell
+$ rubocop -S
+```
+
 # start the app
 ```shell
 $ ./bin/restful-api
