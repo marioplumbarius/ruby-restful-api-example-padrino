@@ -45,7 +45,6 @@ describe RestfulApi::App::AppHelper do
         let(:mocked_request) { HttpExecutorHelper.execute_request http_method_name }
 
         it 'returns true' do
-
           method_response = helper.request_requires_body?mocked_request
           expect(method_response).to be_truthy
         end
