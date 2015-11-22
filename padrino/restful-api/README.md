@@ -24,6 +24,7 @@ $ padrino ar:migrate
 ### run unit tests
 ```shell
 $ rspec
+# Test coverage report will be available at ./coverage/index.html
 ```
 
 # start the app
