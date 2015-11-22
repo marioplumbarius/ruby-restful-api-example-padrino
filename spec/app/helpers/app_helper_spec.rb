@@ -40,23 +40,23 @@ describe RestfulApi::App::AppHelper do
   describe '#request_requires_body?' do
     let(:mocked_request) { nil }
 
-    ["PUT", "PATCH", "POST"].each do |http_method_name|
+    ['PUT', 'PATCH', 'POST'].each do |http_method_name|
       context "when http method is #{http_method_name}" do
         let(:mocked_request) { HttpExecutorHelper.execute_request http_method_name }
 
         it 'returns true' do
-          method_response = helper.request_requires_body?mocked_request
+          method_response = helper.request_requires_body? mocked_request
           expect(method_response).to be_truthy
         end
       end
     end
 
-    ["GET", "DELETE"].each do |http_method_name|
+    ['GET', 'DELETE'].each do |http_method_name|
       context "when http method is #{http_method_name}" do
         let(:mocked_request) { HttpExecutorHelper.execute_request http_method_name }
 
         it 'returns false' do
-          method_response = helper.request_requires_body?mocked_request
+          method_response = helper.request_requires_body? mocked_request
           expect(method_response).to be_falsy
         end
       end
