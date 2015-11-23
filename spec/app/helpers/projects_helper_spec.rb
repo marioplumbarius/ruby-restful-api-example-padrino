@@ -1,13 +1,7 @@
 describe RestfulApi::App::ProjectsHelper do
+  let(:helpers){ Class.new }
+  before { helpers.extend RestfulApi::App::ProjectsHelper }
+  subject { helpers }
 
-  # setting up padrino's helper
-  # see http://wikimatze.de/testing-helpers-in-padrino/
-  subject(:helper) do
-    class ProjectsHelperClass
-      include RestfulApi::App::ProjectsHelper
-    end
-
-    ProjectsHelperClass.new
-  end
-
+  pending "add some examples to (or delete) #{__FILE__}"
 end

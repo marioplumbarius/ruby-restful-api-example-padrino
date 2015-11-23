@@ -1,16 +1,9 @@
 require_relative '../../support/helpers/http_executor_helper'
 
 describe RestfulApi::App::AppHelper do
-
-  # setting up padrino's helper
-  # see http://wikimatze.de/testing-helpers-in-padrino/
-  subject(:helper) do
-    class AppHelperClass
-      include RestfulApi::App::AppHelper
-    end
-
-    AppHelperClass.new
-  end
+  let(:helper){ Class.new }
+  before { helper.extend RestfulApi::App::AppHelper }
+  subject { helper }
 
   describe '#body_valid?' do
     let(:body) { nil }
