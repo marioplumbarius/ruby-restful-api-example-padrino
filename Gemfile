@@ -9,6 +9,9 @@ gem 'email_validator'
 
 group :development do
   gem 'rubocop', require: false
+end
+
+group :development, :test do
   gem 'pry-byebug'
 end
 
