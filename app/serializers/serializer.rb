@@ -1,8 +1,8 @@
 class Serializer
 
-  def initialize(keys=[], object)
-    @keys = keys
+  def initialize(object, keys=[])
     @object = object
+    @keys = keys
   end
 
   def render

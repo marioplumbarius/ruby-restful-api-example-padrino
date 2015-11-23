@@ -1,10 +1,11 @@
 require_relative './serializer'
 
 class DeveloperSerializer < Serializer
-  @@keys = []
+
+  KEYS = [:projects]
 
   def initialize(object)
-    super @@keys, object
+    super object, KEYS
   end
 
 end
