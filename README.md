@@ -35,7 +35,7 @@ $ rubocop -S
 
 # start the app
 ```shell
-$ ./bin/restful-api
+$ ./bin/restful_api
 ```
 
 TODOs:
