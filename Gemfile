@@ -18,6 +18,5 @@ group :test do
   gem 'rspec'
   gem 'factory_girl'
   gem 'faker'
-  gem 'database_cleaner'
   gem 'simplecov', :require => false
 end

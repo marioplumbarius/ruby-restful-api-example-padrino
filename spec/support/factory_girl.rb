@@ -3,12 +3,7 @@ RSpec.configure do |config|
 
   # validates all factories
   config.before(:suite) do
-    begin
-      DatabaseCleaner.start
-      FactoryGirl.lint
-    ensure
-      DatabaseCleaner.clean
-    end
+    FactoryGirl.lint
   end
 
   # loads the factories and registers them
