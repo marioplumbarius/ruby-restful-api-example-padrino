@@ -4,44 +4,58 @@ describe '/projects' do
   let(:url) { '/projects' }
 
   describe 'GET /' do
+    let(:projects) { build_list :project, 2 }
+    let(:params) { { page: Faker::Number.digit, per_page: Faker::Number.digit, format: nil } }
+    let(:fetched_projects) { Kaminari.paginate_array(projects).page(params[:page]) }
 
     before do
-      get url
+      allow(Project).to receive(:page).with(params[:page]).and_return(fetched_projects)
+      allow(fetched_projects).to receive(:per).with(params[:per_page]).and_return(fetched_projects.per(params[:per_page]))
     end
 
     after do
-      get url
+      get url, params
     end
 
-    it 'fetches all projects' do
-      expect(Project).to receive(:all)
+    it 'fetches all projects from params[:page]' do
+      expect(Project).to receive(:page).with(params[:page])
     end
 
-    context 'when no project is found' do
+    it 'limits the number of projects per page with param[:per_page]' do
+      expect(fetched_projects).to receive(:per).with(params[:per_page])
+    end
+
+    it 'paginates the response body' do
+      expect(Paginator).to receive(:paginate_relation).with(fetched_projects, params.as_json)
+    end
+
+    context 'when no developer is found' do
+      let(:projects) { [] }
+      let(:fetched_projects) { Kaminari.paginate_array(projects).page(params[:page]) }
+      let(:expected_response_body) { Paginator.paginate_relation(fetched_projects, params).to_json }
+
       before do
-        allow(Project).to receive(:all).and_return([])
-
-        get url
+        get url, params
       end
 
-      it 'returns an empty response body' do
-        expect(last_response.body).to eq [].to_s
+      it 'returns an empty response' do
+        expect(last_response.body).to eq expected_response_body
       end
 
       include_examples :successful_ok_response
     end
 
     context 'when there are projects found' do
-      let(:projects) { build_list :project, 2 }
+      let(:projects) { build_list :project, 1 }
+      let(:fetched_projects) { Kaminari.paginate_array(projects).page(params[:page]) }
+      let(:expected_response_body) { Paginator.paginate_relation(fetched_projects, params).to_json }
 
       before do
-        allow(Project).to receive(:all).and_return(projects)
-
-        get url
+        get url, params
       end
 
       it 'returns the projects in the response body' do
-        expect(last_response.body).to eq projects.to_json
+        expect(last_response.body).to eq expected_response_body
       end
 
       include_examples :successful_ok_response
