@@ -21,6 +21,7 @@ RestfulApi::App.controllers :developers do
 
     if @developer.save
       status 201
+      { id: @developer.id }.to_json
     else
       status 422
       render_errors @developer
