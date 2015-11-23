@@ -1,4 +1,4 @@
-describe DeveloperSerializer, focus: true do
+describe DeveloperSerializer do
   let(:object) { build :project }
   subject{ described_class.new object }
 
