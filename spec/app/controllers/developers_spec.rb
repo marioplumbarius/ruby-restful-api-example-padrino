@@ -4,44 +4,58 @@ describe '/developers' do
   let(:url) { '/developers' }
 
   describe 'GET /' do
+    let(:developers) { build_list :developer, 2 }
+    let(:params) { { page: Faker::Number.digit, per_page: Faker::Number.digit, format: nil } }
+    let(:fetched_developers) { Kaminari.paginate_array(developers).page(params[:page]) }
 
     before do
-      get url
+      allow(Developer).to receive(:page).with(params[:page]).and_return(fetched_developers)
+      allow(fetched_developers).to receive(:per).with(params[:per_page]).and_return(fetched_developers.per(params[:per_page]))
     end
 
     after do
-      get url
+      get url, params
     end
 
-    it 'fetches all developers' do
-      expect(Developer).to receive(:all)
+    it 'fetches all developers from :page' do
+      expect(Developer).to receive(:page).with(params[:page])
+    end
+
+    it 'limits the number of developers per page with param[:per_page]' do
+      expect(fetched_developers).to receive(:per).with(params[:per_page])
+    end
+
+    it 'paginates the response body' do
+      expect(Paginator).to receive(:paginate_relation).with(fetched_developers, params.as_json)
     end
 
     context 'when no developer is found' do
-      before do
-        allow(Developer).to receive(:all).and_return([])
+      let(:developers) { [] }
+      let(:fetched_developers) { Kaminari.paginate_array(developers).page(params[:page]) }
+      let(:expected_response_body) { Paginator.paginate_relation(fetched_developers, params).to_json }
 
-        get url
+      before do
+        get url, params
       end
 
-      it 'returns an empty response body' do
-        expect(last_response.body).to eq [].to_s
+      it 'returns an empty response' do
+        expect(last_response.body).to eq expected_response_body
       end
 
       include_examples :successful_ok_response
     end
 
     context 'when there are developers found' do
-      let(:developers) { build_list :developer, 2 }
+      let(:developers) { build_list :developer, 1 }
+      let(:fetched_developers) { Kaminari.paginate_array(developers).page(params[:page]) }
+      let(:expected_response_body) { Paginator.paginate_relation(fetched_developers, params).to_json }
 
       before do
-        allow(Developer).to receive(:all).and_return(developers)
-
-        get url
+        get url, params
       end
 
       it 'returns the developers in the response body' do
-        expect(last_response.body).to eq developers.to_json
+        expect(last_response.body).to eq expected_response_body
       end
 
       include_examples :successful_ok_response

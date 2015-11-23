@@ -4,9 +4,9 @@ RestfulApi::App.controllers :developers do
   # add :accepts => :json to all methods
 
   get '/', provides: :json do
-    @developers = Developer.all
+    @developers = Developer.page(params[:page]).per(params[:per_page])
 
-    @developers.to_json
+    Paginator.paginate_relation(@developers, params).to_json
   end
 
   delete '/', provides: :json do
