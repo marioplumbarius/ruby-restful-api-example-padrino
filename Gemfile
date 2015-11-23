@@ -7,6 +7,7 @@ gem 'sqlite3'
 gem 'padrino', '0.13.0'
 gem 'email_validator'
 gem 'kaminari', require: 'kaminari/sinatra'
+gem 'redis'
 
 group :development do
   gem 'rubocop', require: false
