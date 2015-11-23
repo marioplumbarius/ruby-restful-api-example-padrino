@@ -65,11 +65,9 @@ module RestfulApi
     #   end
     #
 
-    # TODO: test me!
     before do
-      # parses the body, if needed
       body = request.body.read
-      @request_requires_body = request_requires_body?(request)
+      @request_requires_body = request_requires_body? request
       @request_body = JSON.parse body if @request_requires_body && !body.blank?
 
       # halts if body is required and absent
