@@ -1,3 +1,5 @@
+require_relative '../serializers/developer_serializer'
+
 RestfulApi::App.controllers :developers do
 
   # TODO
@@ -21,6 +23,7 @@ RestfulApi::App.controllers :developers do
 
     if @developer.save
       status 201
+      { id: @developer.id }.to_json
     else
       status 422
       render_errors @developer
@@ -30,10 +33,10 @@ RestfulApi::App.controllers :developers do
   get '/:id', provides: :json do
     @developer = Developer.find_by_id(params[:id])
 
-    if !@developer.blank?
-      @developer.to_json
-    else
+    if @developer.blank?
       status 404
+    else
+      DeveloperSerializer.new(@developer).render
     end
   end
 
@@ -63,5 +66,4 @@ RestfulApi::App.controllers :developers do
       status 404
     end
   end
-
 end

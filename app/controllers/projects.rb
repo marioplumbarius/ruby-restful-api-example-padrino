@@ -20,6 +20,7 @@ RestfulApi::App.controllers :projects do
 
     if @project.save
       status 201
+      { id: @project.id }.to_json
     else
       status 422
       render_errors @project
