@@ -3,6 +3,8 @@
 module RestfulApi
   class App
     module AppHelper
+      SINATRA_ERROR_KEY_NAME ='sinatra.error'
+      # list of http methods which implies the need of a body
       HTTP_METHODS_REQUIRES_BODY = %w(POST PATCH PUT)
 
       def body_valid?(body, valid_keys)
@@ -17,14 +19,10 @@ module RestfulApi
         HTTP_METHODS_REQUIRES_BODY.include? request.env['REQUEST_METHOD']
       end
 
-      def sinatra_error_key_name
-        'sinatra.error'
-      end
-
-      # padrino's adds raised errors inside env['sinatra.error'] by default and returns a ugly response
+      # padrino's adds raised errors inside env['sinatra.error'] by default and returns an ugly response
       # this method can be used to catch them and prevent the default behaviour
       def sinatra_error_is_a?(env, klass)
-        !env[sinatra_error_key_name].blank? && env[sinatra_error_key_name].is_a?(klass)
+        !env[SINATRA_ERROR_KEY_NAME].blank? && env[SINATRA_ERROR_KEY_NAME].is_a?(klass)
       end
 
     end
