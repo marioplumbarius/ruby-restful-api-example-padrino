@@ -39,7 +39,6 @@ $ ./bin/restful_api
 ```
 
 TODOs:
-- associations
 - translations
 - searcheble api
 - pageable api
