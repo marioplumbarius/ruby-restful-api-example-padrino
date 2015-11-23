@@ -3,9 +3,6 @@
 module RestfulApi
   class App
     module DevelopersHelper
-      def render_errors(developer)
-        {"errors": developer.errors}.to_json
-      end
     end
 
     helpers DevelopersHelper

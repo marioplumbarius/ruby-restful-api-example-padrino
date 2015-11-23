@@ -25,6 +25,10 @@ module RestfulApi
         !env[SINATRA_ERROR_KEY_NAME].blank? && env[SINATRA_ERROR_KEY_NAME].is_a?(klass)
       end
 
+      def render_errors(object)
+        {"errors": object.errors}.to_json
+      end
+
     end
 
     helpers AppHelper

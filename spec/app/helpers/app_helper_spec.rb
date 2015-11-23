@@ -100,4 +100,19 @@ describe RestfulApi::App::AppHelper do
     end
   end
 
+  describe '#render_errors' do
+    let(:developer) { build :developer, :invalid }
+
+    before do
+      developer.save
+    end
+
+    it 'returns a json with object\'s errors' do
+      response = helper.render_errors developer
+      expected_response = {"errors": developer.errors}.to_json
+
+      expect(response).to eq expected_response
+    end
+  end
+
 end
