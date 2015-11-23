@@ -26,8 +26,7 @@ ActiveRecord::Base.configurations[:production] = {
 
 ActiveRecord::Base.configurations[:test] = {
   :adapter => 'sqlite3',
-  :database => Padrino.root('db', 'restful_api_test.db')
-
+  :database => ':memory:'
 }
 
 # Setup our logger

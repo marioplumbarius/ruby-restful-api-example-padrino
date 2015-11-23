@@ -3,5 +3,6 @@
 --require support/test_coverage
 --require spec_helper
 --require support/padrino
+--require support/in_memory_db
 --require support/factory_girl
 --require support/shoulda
