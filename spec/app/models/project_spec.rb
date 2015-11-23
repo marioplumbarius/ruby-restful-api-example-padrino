@@ -17,4 +17,16 @@ describe Project, type: :model do
 
     end
   end
+
+  context 'default_scope' do
+
+    after do
+      Project.first
+    end
+
+    it 'orders by :updated_at' do
+      expect(Project).to receive(:order).with(:updated_at)
+    end
+  end
+
 end

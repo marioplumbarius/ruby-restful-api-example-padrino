@@ -16,4 +16,15 @@ describe Developer, type: :model do
   it { is_expected.to validate_uniqueness_of(:email) }
   it { is_expected.to allow_value('mariosouzaluan@gmail.com').for(:email) }
   it { is_expected.to_not allow_value('mariosouzaluangmailcom').for(:email) }
+
+  context 'default_scope' do
+
+    after do
+      Developer.first
+    end
+
+    it 'orders by :updated_at' do
+      expect(Developer).to receive(:order).with(:updated_at)
+    end
+  end
 end
