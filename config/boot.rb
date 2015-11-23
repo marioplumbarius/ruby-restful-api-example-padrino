@@ -25,6 +25,8 @@ I18n.default_locale = :en
 # Add your before (RE)load hooks here
 #
 Padrino.before_load do
+  Padrino.require_dependencies "#{PADRINO_ROOT}/app/serializers/serializer.rb"
+  Padrino.require_dependencies "#{PADRINO_ROOT}/app/serializers/developer_serializer.rb"
 end
 
 ##

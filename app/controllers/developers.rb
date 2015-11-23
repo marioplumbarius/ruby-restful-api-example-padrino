@@ -1,5 +1,3 @@
-require_relative '../serializers/developer_serializer'
-
 RestfulApi::App.controllers :developers do
 
   # TODO

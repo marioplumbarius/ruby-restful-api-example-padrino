@@ -1,5 +1,3 @@
-require_relative './serializer'
-
 class DeveloperSerializer < Serializer
 
   KEYS = [:projects]
