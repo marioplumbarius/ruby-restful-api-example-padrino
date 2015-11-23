@@ -39,7 +39,6 @@ $ ./bin/restful_api
 ```
 
 TODOs:
-- searcheble api
 - cache
 - basic auth and JWT ( https://github.com/jwt/ruby-jwt, https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens, https://auth0.com/blog/2014/12/02/using-json-web-tokens-as-api-keys/)
 - translations
