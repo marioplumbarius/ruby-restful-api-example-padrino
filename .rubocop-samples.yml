@@ -241,6 +241,9 @@ Style/BlockDelimiters:
     - lambda
     - proc
     - it
+    - context
+    - describe
+    - shared_examples_for
 
 Style/BracesAroundHashParameters:
   EnforcedStyle: no_braces

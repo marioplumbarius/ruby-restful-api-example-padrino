@@ -1,3 +1,4 @@
+# Used by padrino to create a connection pool for ActiveRecord
 class ConnectionPoolManagement
   def initialize(app)
     @app = app

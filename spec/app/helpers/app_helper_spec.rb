@@ -14,7 +14,7 @@ describe RestfulApi::App::AppHelper do
 
   describe '#body_valid?' do
     let(:body) { nil }
-    let(:valid_keys) { ['a', 'b', 'c'] }
+    let(:valid_keys) { %w(a b c) }
 
     context 'with valid body' do
       let(:body) { {a: 1, b: 2, c: 3}.as_json }
@@ -40,7 +40,7 @@ describe RestfulApi::App::AppHelper do
   describe '#request_requires_body?' do
     let(:mocked_request) { nil }
 
-    ['PUT', 'PATCH', 'POST'].each do |http_method_name|
+    %w(PUT PATCH POST).each do |http_method_name|
       context "when http method is #{http_method_name}" do
         let(:mocked_request) { HttpExecutorHelper.execute_request http_method_name }
 
@@ -51,7 +51,7 @@ describe RestfulApi::App::AppHelper do
       end
     end
 
-    ['GET', 'DELETE'].each do |http_method_name|
+    %w(GET DELETE).each do |http_method_name|
       context "when http method is #{http_method_name}" do
         let(:mocked_request) { HttpExecutorHelper.execute_request http_method_name }
 

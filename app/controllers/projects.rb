@@ -3,19 +3,19 @@ RestfulApi::App.controllers :projects do
   # TODO
   # add :accepts => :json to all methods
 
-  get "/", :provides => :json do
+  get '/', provides: :json do
     @projects = Project.all
 
     @projects.to_json
   end
 
-  delete "/", :provides => :json do
+  delete '/', provides: :json do
     Project.delete_all
 
     status 204
   end
 
-  post "/", :provides => :json do
+  post '/', provides: :json do
     @project = Project.new(@request_body)
 
     if @project.save
@@ -26,17 +26,17 @@ RestfulApi::App.controllers :projects do
     end
   end
 
-  get "/:id", :provides => :json do
+  get '/:id', provides: :json do
     @project = Project.find_by_id(params[:id])
 
-    unless @project.blank?
+    if !@project.blank?
       @project.to_json
     else
       status 404
     end
   end
 
-  patch "/:id", :provides => :json do
+  patch '/:id', provides: :json do
     begin
       @project = Project.update(params[:id], @request_body.as_json)
 
@@ -52,7 +52,7 @@ RestfulApi::App.controllers :projects do
     end
   end
 
-  delete "/:id", :provides => :json do
+  delete '/:id', provides: :json do
     number_affected_rows = Project.delete(params[:id])
 
     if number_affected_rows == 1

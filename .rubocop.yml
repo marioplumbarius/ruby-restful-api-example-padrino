@@ -1,0 +1,35 @@
+# general
+AllCops:
+  Excludes:
+    - db/**
+    - config/database.rb
+    - config/apps.rb
+    - restful-api
+Documentation:
+  Enabled: false
+
+# metrics
+Metrics/LineLength:
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
+
+# style
+Style/SpaceAroundBlockParameters:
+  Enabled: false
+Style/SpaceAroundEqualsInParameterDefault:
+  Enabled: false
+Style/SpaceBeforeBlockBraces:
+  Enabled: false
+Style/SpaceInsideHashLiteralBraces:
+  Enabled: false
+Style/SpaceInsideStringInterpolation:
+  Enabled: false
+Style/EmptyLinesAroundBlockBody:
+  Enabled: false
+Style/EmptyLinesAroundClassBody:
+  Enabled: false
+Style/EmptyLinesAroundModuleBody:
+  Enabled: false
+Style/SpaceAroundOperators:
+  Enabled: false

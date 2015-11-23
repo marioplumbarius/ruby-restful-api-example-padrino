@@ -3,18 +3,18 @@ module HttpExecutorHelper
 
   def self.execute_request(http_method, url='/', body={})
     case http_method
-    when "PUT"
+    when 'PUT'
       put url, body
-    when "POST"
+    when 'POST'
       post url, body
-    when "PATCH"
+    when 'PATCH'
       patch url, body
-    when "DELETE"
+    when 'DELETE'
       delete url
-    when "GET"
+    when 'GET'
       get url
     else
-      raise ArgumentError.new "#{http_method} does not exist"
+      fail ArgumentError, "#{http_method} does not exist"
     end
 
     last_request

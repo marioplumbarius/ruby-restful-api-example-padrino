@@ -36,9 +36,11 @@ module RestfulApi
     # set :default_builder, 'foo'   # Set a custom form builder (default 'StandardFormBuilder')
     # set :locale_path, 'bar'       # Set path for I18n translations (default your_apps_root_path/locale)
     # layout  :my_layout            # Layout can be in views/layouts/foo.ext or views/foo.ext (default :application)
-    set :reload, false            # Reload application files (default in development)
+    # Reload application files (default in development
+    set :reload, false
     # disable :sessions             # Disabled sessions by default (enable if needed)
-    disable :flash                # Disables sinatra-flash (enabled by default if Sinatra::Flash is defined)
+    # Disables sinatra-flash (enabled by default if Sinatra::Flash is defined)
+    disable :flash
     disable :protect_from_csrf
     disable :layout
 
@@ -76,18 +78,7 @@ module RestfulApi
 
     after do
       # halts if some of the keys from request's body is not valid
-      halt 400, {'Content-Type' => 'application/json'}, nil if sinatra_error_is_a? ActiveRecord::UnknownAttributeError
-    end
-
-    private
-    def sinatra_error_key_name
-      @sinatra_error_key_name ||= 'sinatra.error'
-    end
-
-    # padrino's adds raised errors inside @env['sinatra.error'] by default and returns a ugly response
-    # this method can be used to catch them and prevent the default behaviour
-    def sinatra_error_is_a?(klass)
-      !@env[sinatra_error_key_name].blank? && @env[sinatra_error_key_name].is_a?(klass)
+      halt 400, {'Content-Type' => 'application/json'}, nil if sinatra_error_is_a? @env, ActiveRecord::UnknownAttributeError
     end
   end
 end
