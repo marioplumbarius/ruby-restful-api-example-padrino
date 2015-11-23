@@ -1,7 +1,9 @@
 RestfulApi::App.controllers :developers do
-
   # TODO
   # add :accepts => :json to all methods
+  #
+  DEVELOPER_CACHE_KEY_PREFIX = 'developer:'
+  DEVELOPER_CACHE_DEFAULT_EXPIRATION = 10
 
   get '/', provides: :json do
     @developers = Developer.page(params[:page]).per(params[:per_page])
@@ -29,21 +31,33 @@ RestfulApi::App.controllers :developers do
   end
 
   get '/:id', provides: :json do
-    @developer = Developer.find_by_id(params[:id])
+    # TODO - add unit tests
+    @developer = RedisProvider.get "#{DEVELOPER_CACHE_KEY_PREFIX}#{params[:id]}"
 
+    # TODO - add unit tests
     if @developer.blank?
-      status 404
+      @developer = Developer.find_by_id(params[:id])
+
+      if @developer.blank?
+        status 404
+      else
+        response = DeveloperSerializer.new(@developer).render
+        # TODO - add unit tests
+        RedisProvider.set "#{DEVELOPER_CACHE_KEY_PREFIX}#{params[:id]}", response, DEVELOPER_CACHE_DEFAULT_EXPIRATION
+        response
+      end
     else
-      DeveloperSerializer.new(@developer).render
+      @developer
     end
   end
 
   patch '/:id', provides: :json do
-
     begin
       @developer = Developer.update(params[:id], @request_body.as_json)
 
       if @developer.valid?
+        # TODO - add unit tests
+        RedisProvider.del "#{DEVELOPER_CACHE_KEY_PREFIX}#{params[:id]}"
         status 204
       else
         status 422
@@ -59,6 +73,9 @@ RestfulApi::App.controllers :developers do
     number_affected_rows = Developer.delete(params[:id])
 
     if number_affected_rows == 1
+      # TODO - add unit tests
+      RedisProvider.del "#{DEVELOPER_CACHE_KEY_PREFIX}#{params[:id]}"
+
       status 204
     else
       status 404

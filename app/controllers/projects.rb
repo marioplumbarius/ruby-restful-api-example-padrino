@@ -2,6 +2,9 @@ RestfulApi::App.controllers :projects do
 
   # TODO
   # add :accepts => :json to all methods
+  #
+  PROJECT_CACHE_KEY_PREFIX = 'project:'
+  PROJECT_CACHE_DEFAULT_EXPIRATION = 10
 
   get '/', provides: :json do
     @projects = Project.page(params[:page]).per(params[:per_page])
@@ -28,12 +31,22 @@ RestfulApi::App.controllers :projects do
   end
 
   get '/:id', provides: :json do
-    @project = Project.find_by_id(params[:id])
+    # TODO - add unit tests
+    @project = RedisProvider.get "#{PROJECT_CACHE_KEY_PREFIX}#{params[:id]}"
 
-    if !@project.blank?
-      @project.to_json
-    else
-      status 404
+    # TODO - add unit tests
+    if @project.blank?
+
+      @project = Project.find_by_id(params[:id])
+
+      if !@project.blank?
+        response = @project.to_json
+        # TODO - add unit tests
+        RedisProvider.set "#{PROJECT_CACHE_KEY_PREFIX}#{params[:id]}", response, PROJECT_CACHE_DEFAULT_EXPIRATION
+        response
+      else
+        status 404
+      end
     end
   end
 
@@ -42,6 +55,8 @@ RestfulApi::App.controllers :projects do
       @project = Project.update(params[:id], @request_body.as_json)
 
       if @project.valid?
+        # TODO - add unit tests
+        RedisProvider.del "#{PROJECT_CACHE_KEY_PREFIX}#{params[:id]}"
         status 204
       else
         status 422
@@ -57,6 +72,8 @@ RestfulApi::App.controllers :projects do
     number_affected_rows = Project.delete(params[:id])
 
     if number_affected_rows == 1
+      # TODO - add unit tests
+      RedisProvider.del "#{PROJECT_CACHE_KEY_PREFIX}#{params[:id]}"
       status 204
     else
       status 404
