@@ -33,6 +33,10 @@ end
 # Add your after (RE)load hooks here
 #
 Padrino.after_load do
+  Kaminari.configure do |config|
+    config.default_per_page = 10
+    config.max_per_page = 50
+  end
 end
 
 Padrino.load!

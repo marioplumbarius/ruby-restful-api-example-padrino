@@ -6,6 +6,7 @@ gem 'activerecord', '>= 3.1', require: 'active_record'
 gem 'sqlite3'
 gem 'padrino', '0.13.0'
 gem 'email_validator'
+gem 'kaminari', require: 'kaminari/sinatra'
 
 group :development do
   gem 'rubocop', require: false
