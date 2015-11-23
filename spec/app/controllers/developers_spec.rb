@@ -117,7 +117,7 @@ describe '/developers' do
   end
 
   describe 'GET /:id' do
-    let(:developer) { build :developer }
+    let(:developer) { build :developer, :with_projects }
     let(:id) { Faker::Number.digit }
     let(:uri) { url.dup.concat "/#{id}" }
 
@@ -131,12 +131,17 @@ describe '/developers' do
 
       before do
         allow(Developer).to receive(:find_by_id).with(id).and_return(developer)
+        allow(DeveloperSerializer).to receive(:new).with(developer).and_call_original
 
         get uri
       end
 
+      it 'serializes it' do
+        expect(DeveloperSerializer).to receive(:new).with(developer).at_most(1).times
+      end
+
       it 'returns it' do
-        expect(last_response.body).to eq developer.to_json
+        expect(last_response.body).to eq developer.to_json include: :projects
       end
 
       include_examples :successful_ok_response

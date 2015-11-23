@@ -11,5 +11,9 @@ FactoryGirl.define do
       age { -1 }
       github { 'github.com' }
     end
+
+    trait :with_projects do
+      projects { build_list :project, 1 }
+    end
   end
 end
