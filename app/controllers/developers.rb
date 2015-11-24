@@ -1,7 +1,6 @@
 RestfulApi::App.controllers :developers do
   # TODO
   # add :accepts => :json to all methods
-  #
   DEVELOPER_CACHE_KEY_PREFIX = 'developer:'
   DEVELOPER_CACHE_DEFAULT_EXPIRATION = 10
 

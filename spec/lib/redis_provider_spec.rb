@@ -1,6 +1,6 @@
 require_relative '../support/shared_examples/redis_shared_examples'
 
-describe RedisProvider, focus: true do
+describe RedisProvider do
   subject { described_class }
 
   describe '.get' do
