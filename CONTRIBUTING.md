@@ -1,11 +1,11 @@
-*With ideias from [sinatra](https://github.com/sinatra/sinatra/blob/master/CONTRIBUTING.md)*
+*With ideias from [sinatra](https://github.com/sinatra/sinatra/blob/master/CONTRIBUTING.md) and [rails-api](https://github.com/rails-api/rails-api)*
 
 # Contributing
 ***
 1. Fork it
-2. Create your feature branch (git checkout -b my-new-feature)
-3. Commit your changes (git commit -am 'Added some feature')
-4. Push to the branch (git push origin my-new-feature)
+2. Create your feature branch (```git checkout -b my-new-feature```)
+3. Commit your changes (```git commit -am 'Added some feature'```)
+4. Push to the branch (```git push origin my-new-feature```)
 5. Create new Pull Request
 
 ## Guidelines:
