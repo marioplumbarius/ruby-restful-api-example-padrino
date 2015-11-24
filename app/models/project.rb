@@ -6,7 +6,7 @@ class Project < ActiveRecord::Base
   validates :name, presence: true
   validates :kind, inclusion: { in: Project.kinds.keys }
   validates :release_date, presence: true
-  validates :developer_id, presence: true
+  validates :developer, presence: true
 
   default_scope { order(:updated_at) }
 end
