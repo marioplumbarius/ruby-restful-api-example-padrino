@@ -10,9 +10,7 @@ shared_examples_for :cannot_connect_ro_redis do |object, method, *args|
       let(:arguments) { args.dup.push silent }
 
       it 'raises Redis::CannotConnectError error' do
-        expect{
-          object.method(method).call *arguments
-        }.to raise_error(Redis::CannotConnectError)
+        expect { object.method(method).call(*arguments) }.to raise_error(Redis::CannotConnectError)
       end
     end
 
@@ -21,9 +19,7 @@ shared_examples_for :cannot_connect_ro_redis do |object, method, *args|
       let(:arguments) { args.dup.push silent }
 
       it 'does not raise Redis::CannotConnectError error' do
-        expect{
-          object.method(method).call *arguments
-        }.not_to raise_error
+        expect { object.method(method).call(*arguments) }.not_to raise_error
       end
     end
 
@@ -32,9 +28,7 @@ shared_examples_for :cannot_connect_ro_redis do |object, method, *args|
       let(:arguments) { args.dup.push silent }
 
       it 'does not raise Redis::CannotConnectError error' do
-        expect{
-          object.method(method).call *arguments
-        }.to raise_error(Redis::CannotConnectError)
+        expect { object.method(method).call(*arguments) }.to raise_error(Redis::CannotConnectError)
       end
     end
 
@@ -42,9 +36,7 @@ shared_examples_for :cannot_connect_ro_redis do |object, method, *args|
       let(:arguments) { args.dup }
 
       it 'does not raise Redis::CannotConnectError error' do
-        expect{
-          object.method(method).call *arguments
-        }.not_to raise_error
+        expect { object.method(method).call(*arguments) }.not_to raise_error
       end
     end
   end
