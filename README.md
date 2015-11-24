@@ -1,6 +1,6 @@
 # Padrino's RESTFul API example
 
-[![Build Status](https://travis-ci.org/marioluan/ruby-web-frameworks-examples.svg?branch=master)](https://travis-ci.org/marioluan/ruby-web-frameworks-examples)
+[![Build Status](https://travis-ci.org/marioluan/ruby-restful-api-example-padrino.svg?branch=master)](https://travis-ci.org/marioluan/ruby-restful-api-example-padrino)
 [![Code Climate](https://codeclimate.com/github/marioluan/ruby-web-frameworks-examples/badges/gpa.svg)](https://codeclimate.com/github/marioluan/ruby-web-frameworks-examples)
 [![Test Coverage](https://codeclimate.com/github/marioluan/ruby-web-frameworks-examples/badges/coverage.svg)](https://codeclimate.com/github/marioluan/ruby-web-frameworks-examples/coverage)
 ***
