@@ -1,7 +1,14 @@
 describe RestfulApi::App::DevelopersHelper do
-  let(:helper){ Class.new }
-  before { helper.extend RestfulApi::App::DevelopersHelper }
-  subject { helper }
 
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe '::DEVELOPER_CACHE_KEY_PREFIX' do
+    it 'returns the default cache key for developers' do
+      expect(described_class::DEVELOPER_CACHE_KEY_PREFIX).to eq 'developer:'
+    end
+  end
+
+  describe '::DEVELOPER_CACHE_DEFAULT_EXPIRATION' do
+    it 'returns the default expiration for developers' do
+      expect(described_class::DEVELOPER_CACHE_DEFAULT_EXPIRATION).to eq 10
+    end
+  end
 end
