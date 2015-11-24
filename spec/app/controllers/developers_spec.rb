@@ -134,45 +134,98 @@ describe '/developers' do
     let(:developer) { build :developer, :with_projects }
     let(:id) { Faker::Number.digit }
     let(:uri) { url.dup.concat "/#{id}" }
+    let(:cache_key) { "#{RestfulApi::App::DevelopersHelper::DEVELOPER_CACHE_KEY_PREFIX}#{id}" }
+    let(:cache_expiration) { RestfulApi::App::DevelopersHelper::DEVELOPER_CACHE_DEFAULT_EXPIRATION }
 
-    it 'fetches the developer with the provided :id' do
-      expect(Developer).to receive(:find_by_id).with(id)
+    it 'fetches the developer from redis' do
+      expect(RedisProvider).to receive(:get).with(cache_key)
 
       get uri
     end
 
-    context 'when it exists' do
-
+    context 'when it is found in redis' do
       before do
-        allow(Developer).to receive(:find_by_id).with(id).and_return(developer)
-        allow(DeveloperSerializer).to receive(:new).with(developer).and_call_original
+        allow(RedisProvider).to receive(:get).with(cache_key).and_return(developer.to_json)
 
         get uri
       end
 
-      it 'serializes it' do
-        expect(DeveloperSerializer).to receive(:new).with(developer).at_most(1).times
+      after do
+        get uri
       end
 
       it 'returns it' do
-        expect(last_response.body).to eq developer.to_json include: :projects
+        expect(last_response.body).to eq developer.to_json
+      end
+
+      it 'does not fetch it from database' do
+        expect(Developer).not_to receive(:find_by_id).with(id)
       end
 
       include_examples :successful_ok_response
     end
 
-    context 'when it does not exist' do
+    context 'when it is not found in redis' do
+
       before do
-        allow(Developer).to receive(:find_by_id).with(id).and_return(nil)
+        allow(RedisProvider).to receive(:get).with(cache_key).and_return(nil)
+      end
+
+      it 'fetches the developer with the provided :id' do
+        expect(Developer).to receive(:find_by_id).with(id)
 
         get uri
       end
 
-      it 'returns an empty body' do
-        expect(last_response.body).to be_blank
+      context 'when it exists' do
+
+        before do
+          allow(Developer).to receive(:find_by_id).with(id).and_return(developer)
+          allow(DeveloperSerializer).to receive(:new).with(developer).and_call_original
+
+          get uri
+        end
+
+        after do
+          get uri
+        end
+
+        it 'serializes it' do
+          expect(DeveloperSerializer).to receive(:new).with(developer).at_most(1).times
+        end
+
+        it 'caches it in redis' do
+          expect(RedisProvider).to receive(:set).with(cache_key, developer.to_json(include: :projects), cache_expiration)
+        end
+
+        it 'returns it' do
+          expect(last_response.body).to eq developer.to_json(include: :projects)
+        end
+
+        include_examples :successful_ok_response
       end
 
-      include_examples :unsuccessful_not_found_response
+      context 'when it does not exist' do
+        before do
+          allow(Developer).to receive(:find_by_id).with(id).and_return(nil)
+
+          get uri
+        end
+
+        it 'returns an empty body' do
+          expect(last_response.body).to be_blank
+        end
+
+        it 'does not serialize it' do
+          expect(DeveloperSerializer).not_to receive(:new).with(developer)
+        end
+
+        it 'does not cache it in redis' do
+          expect(RedisProvider).not_to receive(:set).with(cache_key, developer.to_json(include: :projects), cache_expiration)
+        end
+
+        include_examples :unsuccessful_not_found_response
+      end
     end
   end
 
@@ -180,6 +233,7 @@ describe '/developers' do
     let(:developer) { build :developer }
     let(:id) { Faker::Number.digit }
     let(:uri) { url.dup.concat "/#{id}" }
+    let(:cache_key) { "#{RestfulApi::App::DevelopersHelper::DEVELOPER_CACHE_KEY_PREFIX}#{id}" }
 
     context 'when request body is empty' do
       before do
@@ -208,12 +262,25 @@ describe '/developers' do
           patch uri, developer.to_json
         end
 
+        after do
+          patch uri, developer.to_json
+        end
+
         context 'when it is valid' do
+
+          it 'removes it from redis' do
+            expect(RedisProvider).to receive(:del).with(cache_key)
+          end
+
           include_examples :successful_no_content_response
         end
 
         context 'when it is not valid' do
           let(:developer) { build :developer, :invalid }
+
+          it 'does not try to remove it from redis' do
+            expect(RedisProvider).not_to receive(:del).with(cache_key)
+          end
 
           include_examples :unsuccessful_unprocessable_entity_response
         end
@@ -226,6 +293,14 @@ describe '/developers' do
           patch uri, developer.to_json
         end
 
+        after do
+          patch uri, developer.to_json
+        end
+
+        it 'does not try to remove it from redis' do
+          expect(RedisProvider).not_to receive(:del).with(cache_key)
+        end
+
         include_examples :unsuccessful_not_found_response
       end
     end
@@ -234,6 +309,7 @@ describe '/developers' do
   describe 'DELETE /:id' do
     let(:id) { Faker::Number.digit }
     let(:uri) { url.dup.concat "/#{id}" }
+    let(:cache_key) { "#{RestfulApi::App::DevelopersHelper::DEVELOPER_CACHE_KEY_PREFIX}#{id}" }
 
     it 'tries to delete the developer with the provided :id' do
       expect(Developer).to receive(:delete).with(id)
@@ -241,21 +317,37 @@ describe '/developers' do
       delete uri
     end
 
-    context 'when it was found and deleted' do
+    context 'when it was delete' do
       before do
         allow(Developer).to receive(:delete).with(id).and_return(1)
 
         delete uri
       end
 
+      after do
+        delete uri
+      end
+
+      it 'removes it from redis' do
+        expect(RedisProvider).to receive(:del).with(cache_key)
+      end
+
       include_examples :successful_no_content_response
     end
 
-    context 'when it was not found' do
+    context 'when it was not deleted' do
       before do
         allow(Developer).to receive(:delete).with(id).and_return(0)
 
         delete uri
+      end
+
+      after do
+        delete uri
+      end
+
+      it 'does not try to remove it from redis' do
+        expect(RedisProvider).not_to receive(:del).with(cache_key)
       end
 
       include_examples :unsuccessful_not_found_response
