@@ -136,18 +136,23 @@ describe '/projects' do
     let(:project) { build :project }
     let(:id) { Faker::Number.digit }
     let(:uri) { url.dup.concat "/#{id}" }
+    let(:cache_key) { "#{RestfulApi::App::ProjectsHelper::CACHE::DEFAULT_KEY_PREFIX}#{id}" }
+    let(:cache_expiration) { RestfulApi::App::ProjectsHelper::CACHE::DEFAULT_EXPIRATION }
 
-    it 'fetches the project with the provided :id' do
-      expect(Project).to receive(:find_by_id).with(id)
+    it 'fetches the project from redis' do
+      expect(RedisProvider).to receive(:get).with(cache_key)
 
       get uri
     end
 
-    context 'when it exists' do
-
+    context 'when it is found in redis' do
       before do
-        allow(Project).to receive(:find_by_id).with(id).and_return(project)
+        allow(RedisProvider).to receive(:get).with(cache_key).and_return(project.to_json)
 
+        get uri
+      end
+
+      after do
         get uri
       end
 
@@ -155,21 +160,65 @@ describe '/projects' do
         expect(last_response.body).to eq project.to_json
       end
 
+      it 'does not fetch it from database' do
+        expect(Project).not_to receive(:find_by_id).with(id)
+      end
+
       include_examples :successful_ok_response
     end
 
-    context 'when it does not exist' do
+    context 'when it is not found in redis' do
+
       before do
-        allow(Project).to receive(:find_by_id).with(id).and_return(nil)
+        allow(RedisProvider).to receive(:get).with(cache_key).and_return(nil)
+      end
+
+      it 'fetches the project with the provided :id' do
+        expect(Project).to receive(:find_by_id).with(id)
 
         get uri
       end
 
-      it 'returns an empty body' do
-        expect(last_response.body).to be_blank
+      context 'when it exists' do
+
+        before do
+          allow(Project).to receive(:find_by_id).with(id).and_return(project)
+
+          get uri
+        end
+
+        after do
+          get uri
+        end
+
+        it 'caches it in redis' do
+          expect(RedisProvider).to receive(:set).with(cache_key, project.to_json, cache_expiration)
+        end
+
+        it 'returns it' do
+          expect(last_response.body).to eq project.to_json
+        end
+
+        include_examples :successful_ok_response
       end
 
-      include_examples :unsuccessful_not_found_response
+      context 'when it does not exist' do
+        before do
+          allow(Project).to receive(:find_by_id).with(id).and_return(nil)
+
+          get uri
+        end
+
+        it 'returns an empty body' do
+          expect(last_response.body).to be_blank
+        end
+
+        it 'does not cache it in redis' do
+          expect(RedisProvider).not_to receive(:set).with(cache_key, project.to_json, cache_expiration)
+        end
+
+        include_examples :unsuccessful_not_found_response
+      end
     end
   end
 
@@ -177,6 +226,8 @@ describe '/projects' do
     let(:project) { build :project }
     let(:id) { Faker::Number.digit }
     let(:uri) { url.dup.concat "/#{id}" }
+    let(:cache_key) { "#{RestfulApi::App::ProjectsHelper::CACHE::DEFAULT_KEY_PREFIX}#{id}" }
+    let(:request_body) { JSON.parse project.to_json }
 
     context 'when request body is empty' do
       before do
@@ -189,28 +240,41 @@ describe '/projects' do
     context 'when request body is not empty' do
 
       before do
-        allow(Project).to receive(:update).with(id, JSON.parse(project.to_json)).and_return(project)
+        allow(Project).to receive(:update).with(id, request_body).and_return(project)
       end
 
       it 'updates the project\'s attributes' do
-        expect(Project).to receive(:update).with(id, JSON.parse(project.to_json))
+        expect(Project).to receive(:update).with(id, request_body)
 
         patch uri, project.to_json
       end
 
       context 'when the project exists' do
         before do
-          allow(Project).to receive(:update).with(id, JSON.parse(project.to_json)).and_return(project)
+          allow(Project).to receive(:update).with(id, project.as_json).and_return(project)
 
           patch uri, project.to_json
         end
 
+        after do
+          patch uri, project.to_json
+        end
+
         context 'when it is valid' do
+
+          it 'removes it from redis' do
+            expect(RedisProvider).to receive(:del).with(cache_key)
+          end
+
           include_examples :successful_no_content_response
         end
 
         context 'when it is not valid' do
           let(:project) { build :project, :invalid }
+
+          it 'does not try to remove it from redis' do
+            expect(RedisProvider).not_to receive(:del).with(cache_key)
+          end
 
           include_examples :unsuccessful_unprocessable_entity_response
         end
@@ -218,9 +282,17 @@ describe '/projects' do
 
       context 'when the project does not exist' do
         before do
-          allow(Project).to receive(:update).with(id, JSON.parse(project.to_json)).and_raise(ActiveRecord::RecordNotFound)
+          allow(Project).to receive(:update).with(id, request_body).and_raise(ActiveRecord::RecordNotFound)
 
           patch uri, project.to_json
+        end
+
+        after do
+          patch uri, project.to_json
+        end
+
+        it 'does not try to remove it from redis' do
+          expect(RedisProvider).not_to receive(:del).with(cache_key)
         end
 
         include_examples :unsuccessful_not_found_response
@@ -231,6 +303,7 @@ describe '/projects' do
   describe 'DELETE /:id' do
     let(:id) { Faker::Number.digit }
     let(:uri) { url.dup.concat "/#{id}" }
+    let(:cache_key) { "#{RestfulApi::App::ProjectsHelper::CACHE::DEFAULT_KEY_PREFIX}#{id}" }
 
     it 'tries to delete the project with the provided :id' do
       expect(Project).to receive(:delete).with(id)
@@ -238,21 +311,37 @@ describe '/projects' do
       delete uri
     end
 
-    context 'when it was found and deleted' do
+    context 'when it was delete' do
       before do
         allow(Project).to receive(:delete).with(id).and_return(1)
 
         delete uri
       end
 
+      after do
+        delete uri
+      end
+
+      it 'removes it from redis' do
+        expect(RedisProvider).to receive(:del).with(cache_key)
+      end
+
       include_examples :successful_no_content_response
     end
 
-    context 'when it was not found' do
+    context 'when it was not deleted' do
       before do
         allow(Project).to receive(:delete).with(id).and_return(0)
 
         delete uri
+      end
+
+      after do
+        delete uri
+      end
+
+      it 'does not try to remove it from redis' do
+        expect(RedisProvider).not_to receive(:del).with(cache_key)
       end
 
       include_examples :unsuccessful_not_found_response
