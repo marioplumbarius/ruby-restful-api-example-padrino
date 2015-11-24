@@ -9,8 +9,9 @@ describe '/developers' do
     let(:fetched_developers) { Kaminari.paginate_array(developers).page(params[:page]) }
 
     before do
-      allow(Developer).to receive(:page).with(params[:page]).and_return(fetched_developers)
-      allow(fetched_developers).to receive(:per).with(params[:per_page]).and_return(fetched_developers.per(params[:per_page]))
+      allow(Developer).to receive(:page).and_return(fetched_developers)
+      allow(fetched_developers).to receive(:per).and_call_original
+      allow(Paginator).to receive(:paginate_relation).and_call_original
     end
 
     after do
@@ -26,7 +27,7 @@ describe '/developers' do
     end
 
     it 'paginates the response body' do
-      expect(Paginator).to receive(:paginate_relation).with(fetched_developers, params.as_json)
+      expect(Paginator).to receive(:paginate_relation).with(fetched_developers, params).at_most(1).times
     end
 
     context 'when no developer is found' do

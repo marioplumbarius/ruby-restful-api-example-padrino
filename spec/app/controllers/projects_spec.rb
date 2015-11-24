@@ -9,15 +9,16 @@ describe '/projects' do
     let(:fetched_projects) { Kaminari.paginate_array(projects).page(params[:page]) }
 
     before do
-      allow(Project).to receive(:page).with(params[:page]).and_return(fetched_projects)
-      allow(fetched_projects).to receive(:per).with(params[:per_page]).and_return(fetched_projects.per(params[:per_page]))
+      allow(Project).to receive(:page).and_return(fetched_projects)
+      allow(fetched_projects).to receive(:per).and_call_original
+      allow(Paginator).to receive(:paginate_relation).and_call_original
     end
 
     after do
       get url, params
     end
 
-    it 'fetches all projects from params[:page]' do
+    it 'fetches all projects from :page' do
       expect(Project).to receive(:page).with(params[:page])
     end
 
@@ -26,10 +27,10 @@ describe '/projects' do
     end
 
     it 'paginates the response body' do
-      expect(Paginator).to receive(:paginate_relation).with(fetched_projects, params.as_json)
+      expect(Paginator).to receive(:paginate_relation).with(fetched_projects, params).at_most(1).times
     end
 
-    context 'when no developer is found' do
+    context 'when no project is found' do
       let(:projects) { [] }
       let(:fetched_projects) { Kaminari.paginate_array(projects).page(params[:page]) }
       let(:expected_response_body) { Paginator.paginate_relation(fetched_projects, params).to_json }
@@ -92,6 +93,7 @@ describe '/projects' do
 
     context 'when request body is not empty' do
       let(:project) { build :project }
+      let(:request_body) { JSON.parse(project.to_json) }
 
       before do
         allow(Project).to receive(:new).and_return(project)
@@ -102,7 +104,7 @@ describe '/projects' do
       end
 
       it 'builds a new project' do
-        expect(Project).to receive(:new).with(JSON.parse(project.to_json))
+        expect(Project).to receive(:new).with(request_body)
       end
 
       it 'saves the project' do
