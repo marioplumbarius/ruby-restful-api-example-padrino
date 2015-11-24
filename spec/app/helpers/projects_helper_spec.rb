@@ -1,7 +1,17 @@
 describe RestfulApi::App::ProjectsHelper do
-  let(:helpers){ Class.new }
-  before { helpers.extend RestfulApi::App::ProjectsHelper }
-  subject { helpers }
+  subject { described_class }
+  let(:cache_key) { 'project:' }
+  let(:cache_expiration) { 10 }
 
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe '::CACHE::DEFAULT_KEY_PREFIX' do
+    it 'returns the default cache key for developers' do
+      expect(subject::CACHE::DEFAULT_KEY_PREFIX).to eq cache_key
+    end
+  end
+
+  describe '::CACHE::DEFAULT_EXPIRATION' do
+    it 'returns the default expiration for developers' do
+      expect(subject::CACHE::DEFAULT_EXPIRATION).to eq cache_expiration
+    end
+  end
 end

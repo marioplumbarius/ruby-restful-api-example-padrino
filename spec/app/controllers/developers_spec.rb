@@ -134,8 +134,8 @@ describe '/developers' do
     let(:developer) { build :developer, :with_projects }
     let(:id) { Faker::Number.digit }
     let(:uri) { url.dup.concat "/#{id}" }
-    let(:cache_key) { "#{RestfulApi::App::DevelopersHelper::DEVELOPER_CACHE_KEY_PREFIX}#{id}" }
-    let(:cache_expiration) { RestfulApi::App::DevelopersHelper::DEVELOPER_CACHE_DEFAULT_EXPIRATION }
+    let(:cache_key) { "#{RestfulApi::App::DevelopersHelper::CACHE::DEFAULT_KEY_PREFIX}#{id}" }
+    let(:cache_expiration) { RestfulApi::App::DevelopersHelper::CACHE::DEFAULT_EXPIRATION }
 
     it 'fetches the developer from redis' do
       expect(RedisProvider).to receive(:get).with(cache_key)
@@ -233,7 +233,7 @@ describe '/developers' do
     let(:developer) { build :developer }
     let(:id) { Faker::Number.digit }
     let(:uri) { url.dup.concat "/#{id}" }
-    let(:cache_key) { "#{RestfulApi::App::DevelopersHelper::DEVELOPER_CACHE_KEY_PREFIX}#{id}" }
+    let(:cache_key) { "#{RestfulApi::App::DevelopersHelper::CACHE::DEFAULT_KEY_PREFIX}#{id}" }
 
     context 'when request body is empty' do
       before do
@@ -309,7 +309,7 @@ describe '/developers' do
   describe 'DELETE /:id' do
     let(:id) { Faker::Number.digit }
     let(:uri) { url.dup.concat "/#{id}" }
-    let(:cache_key) { "#{RestfulApi::App::DevelopersHelper::DEVELOPER_CACHE_KEY_PREFIX}#{id}" }
+    let(:cache_key) { "#{RestfulApi::App::DevelopersHelper::CACHE::DEFAULT_KEY_PREFIX}#{id}" }
 
     it 'tries to delete the developer with the provided :id' do
       expect(Developer).to receive(:delete).with(id)

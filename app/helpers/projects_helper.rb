@@ -3,7 +3,10 @@
 module RestfulApi
   class App
     module ProjectsHelper
-      #
+      module CACHE
+        DEFAULT_KEY_PREFIX = 'project:'
+        DEFAULT_EXPIRATION = 10
+      end
     end
 
     helpers ProjectsHelper

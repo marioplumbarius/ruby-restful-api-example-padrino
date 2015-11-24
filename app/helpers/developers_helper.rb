@@ -3,8 +3,10 @@
 module RestfulApi
   class App
     module DevelopersHelper
-      DEVELOPER_CACHE_KEY_PREFIX = 'developer:'
-      DEVELOPER_CACHE_DEFAULT_EXPIRATION = 10
+      module CACHE
+        DEFAULT_KEY_PREFIX = 'developer:'
+        DEFAULT_EXPIRATION = 10
+      end
     end
 
     helpers DevelopersHelper

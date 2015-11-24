@@ -3,8 +3,6 @@ RestfulApi::App.controllers :projects do
   # TODO
   # add :accepts => :json to all methods
   #
-  PROJECT_CACHE_KEY_PREFIX = 'project:'
-  PROJECT_CACHE_DEFAULT_EXPIRATION = 10
 
   get '/', provides: :json do
     @projects = Project.page(params[:page]).per(params[:per_page])
@@ -32,7 +30,7 @@ RestfulApi::App.controllers :projects do
 
   get '/:id', provides: :json do
     # TODO - add unit tests
-    @project = RedisProvider.get "#{PROJECT_CACHE_KEY_PREFIX}#{params[:id]}"
+    @project = RedisProvider.get "#{RestfulApi::App::ProjectsHelper::CACHE::DEFAULT_KEY_PREFIX}#{params[:id]}"
 
     # TODO - add unit tests
     if @project.blank?
@@ -42,7 +40,7 @@ RestfulApi::App.controllers :projects do
       if !@project.blank?
         response = @project.to_json
         # TODO - add unit tests
-        RedisProvider.set "#{PROJECT_CACHE_KEY_PREFIX}#{params[:id]}", response, PROJECT_CACHE_DEFAULT_EXPIRATION
+        RedisProvider.set "#{RestfulApi::App::ProjectsHelper::CACHE::DEFAULT_KEY_PREFIX}#{params[:id]}", response, RestfulApi::App::ProjectsHelper::CACHE::DEFAULT_EXPIRATION
         response
       else
         status 404
@@ -56,7 +54,7 @@ RestfulApi::App.controllers :projects do
 
       if @project.valid?
         # TODO - add unit tests
-        RedisProvider.del "#{PROJECT_CACHE_KEY_PREFIX}#{params[:id]}"
+        RedisProvider.del "#{RestfulApi::App::ProjectsHelper::CACHE::DEFAULT_KEY_PREFIX}#{params[:id]}"
         status 204
       else
         status 422
@@ -73,7 +71,7 @@ RestfulApi::App.controllers :projects do
 
     if number_affected_rows == 1
       # TODO - add unit tests
-      RedisProvider.del "#{PROJECT_CACHE_KEY_PREFIX}#{params[:id]}"
+      RedisProvider.del "#{RestfulApi::App::ProjectsHelper::CACHE::DEFAULT_KEY_PREFIX}#{params[:id]}"
       status 204
     else
       status 404

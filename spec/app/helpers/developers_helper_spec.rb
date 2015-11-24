@@ -1,14 +1,17 @@
 describe RestfulApi::App::DevelopersHelper do
+  subject { described_class }
+  let(:cache_key) { 'developer:' }
+  let(:cache_expiration) { 10 }
 
-  describe '::DEVELOPER_CACHE_KEY_PREFIX' do
+  describe '::CACHE::DEFAULT_KEY_PREFIX' do
     it 'returns the default cache key for developers' do
-      expect(described_class::DEVELOPER_CACHE_KEY_PREFIX).to eq 'developer:'
+      expect(subject::CACHE::DEFAULT_KEY_PREFIX).to eq cache_key
     end
   end
 
-  describe '::DEVELOPER_CACHE_DEFAULT_EXPIRATION' do
+  describe '::CACHE::DEFAULT_EXPIRATION' do
     it 'returns the default expiration for developers' do
-      expect(described_class::DEVELOPER_CACHE_DEFAULT_EXPIRATION).to eq 10
+      expect(subject::CACHE::DEFAULT_EXPIRATION).to eq cache_expiration
     end
   end
 end
